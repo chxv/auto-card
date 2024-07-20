@@ -15,9 +15,15 @@ def log(msg: str, wait: float = 3):
 def run(times=100):
     action.Action.mouse_reset(True)
 
+    # metrics
+    enlist_times = 0
+    yellow_times = 0
+    red_times = 0
+
     for i in range(times):
         if action.Action.mouse_leaved():
             log("mouse has leaved the window, exit", 0)
+            print(f"\n result: enlist={enlist_times}, yellow={yellow_times}, red={red_times}\n")
             return
         action.Action.mouse_reset()
         page = action.Page()
@@ -34,6 +40,9 @@ def run(times=100):
             log("increase bet", 1)
         if page.need_gold:
             action.Action.enlist()
+            enlist_times += 1
+            yellow_times += page.yellow_card
+            red_times += page.red_card
             log("enlist success")
             continue
         if page.red_card > 1 or page.yellow_card == 3:
