@@ -15,6 +15,9 @@ def run(times=100):
 
     # metrics
     enlist_times = 0
+    white_times = 0
+    blue_times = 0
+    purple_times = 0
     yellow_times = 0
     red_times = 0
     start = time.time()
@@ -23,8 +26,10 @@ def run(times=100):
         if action.Action.mouse_leaved():
             log("mouse has leaved the window, exit", 0)
             duration = int(time.time() - start)
+            total = white_times + blue_times + purple_times + yellow_times + red_times
             print(f"\n duration={duration}s progress={i}/{times}"
-                  f"\n statistics: enlist={enlist_times}, yellow={yellow_times}, red={red_times}\n")
+                  f"\n statistics: enlist={enlist_times} white={white_times} blue={blue_times} "
+                  f"purple={purple_times} yellow={yellow_times} red={red_times} total={total}\n")
             return
         action.Action.mouse_reset()
         page = action.Page()
@@ -42,6 +47,9 @@ def run(times=100):
         if page.need_gold:
             action.Action.enlist()
             enlist_times += 1
+            white_times += page.white_card
+            blue_times += page.blue_card
+            purple_times += page.purple_card
             yellow_times += page.yellow_card
             red_times += page.red_card
             log("enlist success")
