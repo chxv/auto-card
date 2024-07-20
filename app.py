@@ -1,16 +1,18 @@
 import time
 
 import action
+import random
 
 
 def log(msg: str, wait: float = 3):
     ts = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     print(ts, msg)
     if wait > 0:
+        wait += random.randint(1, 300) / 1000
         time.sleep(wait)
 
 
-def run(times=100):
+def run(times=1000):
     action.Action.mouse_reset(True)
 
     # metrics
