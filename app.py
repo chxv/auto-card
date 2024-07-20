@@ -31,26 +31,32 @@ class Metrics:
               f"yellow={self.yellow_times} red={self.red_times} total={total}\n")
 
 
-def run(times=1000):
+def run(m: Metrics, times: int) -> int:
     action.Action.mouse_reset(True)
 
     # metrics
-    m = Metrics()
+    continues_fail = 0
     for i in range(times):
         if action.Action.mouse_leaved():
             log("mouse has leaved the window, exit", 0)
-            m.print(i, times)
-            return
+            return i
         action.Action.mouse_reset()
         page = action.Page()
         print(page)
+
         if page.is_unknown_status():
+            continues_fail += 1
+            if continues_fail >= 30:
+                log("continues fail, exit", 0)
+                return i
             if page.need_confirm():
                 action.Action.confirm_give_up()
                 log("confirm give up")
                 continue
             log("unknown status", 1)
             continue
+        continues_fail = 0
+
         if page.purple_card == 3 or page.yellow_card > 0 or page.red_card > 0:
             action.Action.increase_bet()
             log("increase bet", 1)
@@ -66,11 +72,10 @@ def run(times=1000):
             continue
         if page.red_card > 1 or page.yellow_card == 3:
             log("amazing event, wait for you", 0)
-            m.print(i, times)
-            return
+            return i
         action.Action.give_up()
         log("give up")
-    m.print(times, times)
+    return times
 
 
 def show():
@@ -79,6 +84,12 @@ def show():
     print(page)
 
 
+def main():
+    m = Metrics()
+    times = run(m, 1000)
+    m.print(times, 1000)
+
+
 if __name__ == '__main__':
-    run()
+    main()
     # show()
