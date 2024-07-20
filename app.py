@@ -27,7 +27,7 @@ def run(times=100):
                 action.Action.confirm_give_up()
                 log("confirm give up")
                 continue
-            log("unknown status")
+            log("unknown status", 1)
             continue
         if page.purple_card == 3 or page.yellow_card > 0 or page.red_card > 0:
             action.Action.increase_bet()
@@ -36,7 +36,7 @@ def run(times=100):
             action.Action.enlist()
             log("enlist success")
             continue
-        if page.red_card > 1:
+        if page.red_card > 1 or page.yellow_card == 3:
             log("amazing event, wait for you", 0)
             return
         action.Action.give_up()
