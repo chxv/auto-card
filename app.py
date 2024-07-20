@@ -1,7 +1,5 @@
 import time
 
-import pyautogui
-
 import action
 
 
@@ -19,11 +17,14 @@ def run(times=100):
     enlist_times = 0
     yellow_times = 0
     red_times = 0
+    start = time.time()
 
     for i in range(times):
         if action.Action.mouse_leaved():
             log("mouse has leaved the window, exit", 0)
-            print(f"\n result: enlist={enlist_times}, yellow={yellow_times}, red={red_times}\n")
+            duration = int(time.time() - start)
+            print(f"\n duration={duration}s progress={i}/{times}"
+                  f"\n statistics: enlist={enlist_times}, yellow={yellow_times}, red={red_times}\n")
             return
         action.Action.mouse_reset()
         page = action.Page()
