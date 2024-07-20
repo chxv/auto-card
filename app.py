@@ -25,9 +25,10 @@ class Metrics:
     def print(self, i, times):
         duration = int(time.time() - self.start)
         total = self.white_times + self.blue_times + self.purple_times + self.yellow_times + self.red_times
-        print(f"\n duration={duration}s progress={i}/{times}"
-              f"\n statistics: enlist={self.enlist_times} white={self.white_times} blue={self.blue_times} "
-              f"purple={self.purple_times} yellow={self.yellow_times} red={self.red_times} total={total}\n")
+        print(f"\n statistics: "
+              f"\n duration={duration}s progress={i}/{times} enlist={self.enlist_times}"
+              f"\n white={self.white_times} blue={self.blue_times} purple={self.purple_times} "
+              f"yellow={self.yellow_times} red={self.red_times} total={total}\n")
 
 
 def run(times=1000):
