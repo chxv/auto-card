@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Tuple
 import pyautogui
+from config.v1 import config
 
 
 class Pixel:
@@ -51,43 +52,43 @@ class Page:
 
         self.update_state()
 
-        self.update_card_num(106, 556)
-        self.update_card_num(360, 622)
-        self.update_card_num(622, 556)
+        self.update_card_num(*config["pixel"]["pos"]["card_1"])
+        self.update_card_num(*config["pixel"]["pos"]["card_2"])
+        self.update_card_num(*config["pixel"]["pos"]["card_3"])
         self.total_card_num = self.white_card + self.blue_card + self.purple_card + self.yellow_card + self.red_card
 
     def update_state(self):
-        px = Pixel(self.im.getpixel((388, 1124)))
-        if px.like(Pixel((146, 212, 81, 255))):
+        px = Pixel(self.im.getpixel(config["pixel"]["pos"]["gold"]))
+        if px.like(Pixel(config["pixel"]["color"]["gold"])):
             self.need_diamond = True
 
-        px = Pixel(self.im.getpixel((378, 1126)))
-        if px.like(Pixel((247, 201, 78, 255))):
+        px = Pixel(self.im.getpixel(config["pixel"]["pos"]["diamond"]))
+        if px.like(Pixel(config["pixel"]["color"]["diamond"])):
             self.need_gold = True
 
     def update_card_num(self, x: int, y: int):
         px = Pixel(self.im.getpixel((x, y)))
-        if px.like(Pixel((169, 165, 158, 255))):
+        if px.like(Pixel(config["pixel"]["color"]["white"])):
             self.white_card += 1
-        if px.like(Pixel((72, 138, 206, 255))):
+        if px.like(Pixel(config["pixel"]["color"]["blue"])):
             self.blue_card += 1
-        if px.like(Pixel((168, 63, 242, 255))):
+        if px.like(Pixel(config["pixel"]["color"]["purple"])):
             self.purple_card += 1
-        if px.like(Pixel((245, 194, 70, 255))):
+        if px.like(Pixel(config["pixel"]["color"]["yellow"])):
             self.yellow_card += 1
-        if px.like(Pixel((200, 54, 61, 255))):
+        if px.like(Pixel(config["pixel"]["color"]["red"])):
             self.red_card += 1
 
     def is_unknown_status(self):
         return (not self.need_diamond and not self.need_gold) or self.total_card_num != 3
 
     def need_confirm(self) -> bool:
-        px1 = Pixel(self.im.getpixel((354, 980)))
-        px2 = Pixel(self.im.getpixel((620, 980)))
-        px3 = Pixel(self.im.getpixel((410, 1030)))
-        return (px1.like(Pixel((218, 88, 78, 255))) and
-                px2.like(Pixel((97, 198, 97, 255))) and
-                px3.like(Pixel((218, 223, 230, 255))))
+        px1 = Pixel(self.im.getpixel(config["pixel"]["pos"]["confirm_no"]))
+        px2 = Pixel(self.im.getpixel(config["pixel"]["pos"]["confirm_yes"]))
+        px3 = Pixel(self.im.getpixel(config["pixel"]["pos"]["confirm_bottom"]))
+        return (px1.like(Pixel(config["pixel"]["color"]["confirm_no"])) and
+                px2.like(Pixel(config["pixel"]["color"]["confirm_yes"])) and
+                px3.like(Pixel(config["pixel"]["color"]["confirm_bottom"])))
 
 
 class Action:
@@ -95,36 +96,36 @@ class Action:
     @staticmethod
     def enlist():
         # 像素点位置不等同于鼠标坐标系位置
-        pyautogui.moveTo(218, 564)
+        pyautogui.moveTo(*config["click"]["enlist"])
         pyautogui.click()
 
     # 加注
     @staticmethod
     def increase_bet():
-        pyautogui.moveTo(322, 519)
+        pyautogui.moveTo(*config["click"]["increase_bet"])
         pyautogui.click()
 
     # 放弃
     @staticmethod
     def give_up():
-        pyautogui.moveTo(211, 613)
+        pyautogui.moveTo(*config["click"]["give_up"])
         pyautogui.click()
 
     # 确认放弃招募剩下的高品质角色
     @staticmethod
     def confirm_give_up():
-        pyautogui.moveTo(277, 484)
+        pyautogui.moveTo(*config["click"]["confirm_give_up"])
         pyautogui.click()
 
     # 鼠标离开游戏窗口
     @staticmethod
     def mouse_leaved() -> bool:
         px = pyautogui.position()
-        return px.x > 410 or px.y > 756
+        return px.x > config["click"]["border"][0] or px.y > config["click"]["border"][1]
 
     # 鼠标复位，避免干扰像素判定
     @staticmethod
     def mouse_reset(click=False):
-        pyautogui.moveTo(207, 45)
+        pyautogui.moveTo(*config["click"]["title_bar"])
         if click:
             pyautogui.click()
