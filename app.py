@@ -60,7 +60,10 @@ def run(m: Metrics, times: int) -> int:
         if page.purple_card == 3 or page.yellow_card > 0 or page.red_card > 0:
             action.Action.increase_bet()
             log("increase bet", 1)
-        if page.need_gold:
+        if page.white_card + page.blue_card == 3:
+            log("ordinary event, wait for next try", 0)
+            return i
+        if page.need_gold:  # 抽卡
             action.Action.enlist()
             m.enlist_times += 1
             m.white_times += page.white_card
