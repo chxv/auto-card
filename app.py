@@ -32,7 +32,7 @@ class Metrics:
 
 
 def run(m: Metrics, times: int) -> int:
-    action.Action.mouse_reset(True)
+    action.Action.move_title(False)
 
     # metrics
     continues_fail = 0
@@ -40,11 +40,16 @@ def run(m: Metrics, times: int) -> int:
         if action.Action.mouse_leaved():
             log("mouse has leaved the window, exit", 0)
             return i
-        action.Action.mouse_reset()
+        action.Action.move_title()
         page = action.Page()
         print(page)
 
         if page.is_unknown_status():
+            if i == 0 and page.is_correct_bottom():  # only for first loop
+                action.Action.move_bottom(True)  # click for first check
+                log("click to enter window", 0)
+                continue
+
             continues_fail += 1
             if continues_fail >= 30:
                 log("continues fail, exit", 0)

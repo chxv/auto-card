@@ -8,6 +8,9 @@ class Pixel:
     def __init__(self, px: Tuple[int, ...]):
         self.px = px
 
+    def __str__(self):
+        return f'({self.px[0]}, {self.px[1]}, {self.px[2]})'
+
     @staticmethod
     def in_deviation(a: int, b: int, deviation: int) -> bool:
         if a > b:
@@ -90,6 +93,11 @@ class Page:
                 px2.like(Pixel(config["pixel"]["color"]["confirm_yes"])) and
                 px3.like(Pixel(config["pixel"]["color"]["confirm_bottom"])))
 
+    def is_correct_bottom(self) -> bool:
+        px = Pixel(self.im.getpixel(config["pixel"]["pos"]["bottom_bar"]))
+        print(px)
+        return px.like(Pixel(config["pixel"]["color"]["bottom_bar"]))
+
 
 class Action:
     # 招募
@@ -125,7 +133,13 @@ class Action:
 
     # 鼠标复位，避免干扰像素判定
     @staticmethod
-    def mouse_reset(click=False):
+    def move_title(click=False):
         pyautogui.moveTo(*config["click"]["title_bar"])
+        if click:
+            pyautogui.click()
+
+    @staticmethod
+    def move_bottom(click=False):
+        pyautogui.moveTo(*config["click"]["bottom_bar"])
         if click:
             pyautogui.click()

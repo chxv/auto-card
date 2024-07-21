@@ -5,7 +5,8 @@ config = {
         "give_up": (211, 613),
         "confirm_give_up": (277, 484),
         "border": (410, 756),
-        "title_bar": (207, 45)
+        "title_bar": (207, 45),
+        "bottom_bar": (200, 680),
     },
     "pixel": {
         "pos": {
@@ -17,6 +18,7 @@ config = {
             "confirm_no": (354, 980),
             "confirm_yes": (620, 980),
             "confirm_bottom": (410, 1030),
+            "bottom_bar": (400, 1350),
         },
         "color": {
             "gold": (146, 212, 81, 255),
@@ -29,6 +31,7 @@ config = {
             "confirm_no": (218, 88, 78, 255),
             "confirm_yes": (97, 198, 97, 255),
             "confirm_bottom": (218, 223, 230, 255),
+            "bottom_bar": (61, 80, 95, 255),
         }
     }
 }
