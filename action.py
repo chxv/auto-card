@@ -17,7 +17,7 @@ class Pixel:
             return b + deviation > a
         return a + deviation >= b
 
-    def like(self, px: 'Pixel', deviation=6) -> bool:
+    def like(self, px: 'Pixel', deviation=20) -> bool:
         if len(self.px) != len(px.px):
             return False
         for i in range(len(px.px)):
@@ -55,9 +55,9 @@ class Page:
 
         self.update_state()
 
-        self.update_card_num(*config["pixel"]["pos"]["card_1"])
-        self.update_card_num(*config["pixel"]["pos"]["card_2"])
-        self.update_card_num(*config["pixel"]["pos"]["card_3"])
+        self.update_card_num_in_range(*config["pixel"]["range"]["card_1"])
+        self.update_card_num_in_range(*config["pixel"]["range"]["card_2"])
+        self.update_card_num_in_range(*config["pixel"]["range"]["card_3"])
         self.total_card_num = self.white_card + self.blue_card + self.purple_card + self.yellow_card + self.red_card
 
     def update_state(self):
@@ -69,18 +69,38 @@ class Page:
         if px.like(Pixel(config["pixel"]["color"]["diamond"])):
             self.need_gold = True
 
-    def update_card_num(self, x: int, y: int):
+    def update_card_num_in_range(self, start: tuple, end: tuple):
+        if self.update_card_num((start[0] + end[0]) / 2, (start[1] + end[1])) / 2:
+            return
+        x, y = start[0], start[1]
+        while x < end[0] and y < end[1]:
+            if self.update_card_num(x, y):
+                return
+            x, y = x + 1, y + 1
+        x, y = end[0], end[1]
+        while x > start[0] and y > start[1]:
+            if self.update_card_num(x, y):
+                return
+            x, y = x - 1, y - 1
+
+    def update_card_num(self, x: int, y: int) -> bool:
         px = Pixel(self.im.getpixel((x, y)))
         if px.like(Pixel(config["pixel"]["color"]["white"])):
             self.white_card += 1
+            return True
         if px.like(Pixel(config["pixel"]["color"]["blue"])):
             self.blue_card += 1
+            return True
         if px.like(Pixel(config["pixel"]["color"]["purple"])):
             self.purple_card += 1
+            return True
         if px.like(Pixel(config["pixel"]["color"]["yellow"])):
             self.yellow_card += 1
+            return True
         if px.like(Pixel(config["pixel"]["color"]["red"])):
             self.red_card += 1
+            return True
+        return False
 
     def is_unknown_status(self):
         return (not self.need_diamond and not self.need_gold) or self.total_card_num != 3

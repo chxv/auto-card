@@ -1,5 +1,5 @@
 import time
-
+import sys
 import action
 import random
 
@@ -65,9 +65,9 @@ def run(m: Metrics, times: int) -> int:
         if page.purple_card == 3 or page.yellow_card > 0 or page.red_card > 0:
             action.Action.increase_bet()
             log("increase bet", 1)
-        if page.white_card + page.blue_card == 3:
-            log("ordinary event, wait for next try", 0)
-            return i
+        # if page.white_card + page.blue_card == 3:
+        #     log("ordinary event, wait for next try", 0)
+        #     return i
         if page.need_gold:  # 抽卡
             action.Action.enlist()
             m.enlist_times += 1
@@ -86,7 +86,7 @@ def run(m: Metrics, times: int) -> int:
     return times
 
 
-def show():
+def debug():
     page = action.Page()
     page.im.save('screenshot.png')
     print(page)
@@ -99,5 +99,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-    # show()
+    if len(sys.argv) > 1 and sys.argv[1] == 'debug':
+        time.sleep(1)
+        debug()
+    else:
+        main()
