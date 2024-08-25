@@ -55,49 +55,53 @@ class Page:
 
         self.update_state()
 
-        self.update_card_num_in_range(*config["pixel"]["range"]["card_1"])
-        self.update_card_num_in_range(*config["pixel"]["range"]["card_2"])
-        self.update_card_num_in_range(*config["pixel"]["range"]["card_3"])
+        self.update_card_num(*config["pixel"]["range"]["card_1"])
+        self.update_card_num(*config["pixel"]["range"]["card_2"])
+        self.update_card_num(*config["pixel"]["range"]["card_3"])
         self.total_card_num = self.white_card + self.blue_card + self.purple_card + self.yellow_card + self.red_card
 
     def update_state(self):
-        px = Pixel(self.im.getpixel(config["pixel"]["pos"]["gold"]))
-        if px.like(Pixel(config["pixel"]["color"]["gold"])):
+        start, end = config["pixel"]["range"]["gold"]
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["gold"])):
             self.need_diamond = True
 
-        px = Pixel(self.im.getpixel(config["pixel"]["pos"]["diamond"]))
-        if px.like(Pixel(config["pixel"]["color"]["diamond"])):
+        start, end = config["pixel"]["range"]["diamond"]
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["diamond"])):
             self.need_gold = True
 
-    def update_card_num_in_range(self, start: tuple, end: tuple):
-        if self.update_card_num((start[0] + end[0]) / 2, (start[1] + end[1])) / 2:
-            return
+    def find_color_in_range(self, start: tuple, end: tuple, color: Pixel) -> bool:
+        def compare_color(x: int, y: int) -> bool:
+            px = Pixel(self.im.getpixel((x, y)))
+            return px.like(color)
+
+        if compare_color((start[0] + end[0]) / 2, (start[1] + end[1]) / 2):
+            return True  # find color in center
         x, y = start[0], start[1]
         while x < end[0] and y < end[1]:
-            if self.update_card_num(x, y):
-                return
+            if compare_color(x, y):
+                return True
             x, y = x + 1, y + 1
         x, y = end[0], end[1]
         while x > start[0] and y > start[1]:
-            if self.update_card_num(x, y):
-                return
+            if compare_color(x, y):
+                return True
             x, y = x - 1, y - 1
+        return False
 
-    def update_card_num(self, x: int, y: int) -> bool:
-        px = Pixel(self.im.getpixel((x, y)))
-        if px.like(Pixel(config["pixel"]["color"]["white"])):
+    def update_card_num(self, start: tuple, end: tuple) -> bool:
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["white"])):
             self.white_card += 1
             return True
-        if px.like(Pixel(config["pixel"]["color"]["blue"])):
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["blue"])):
             self.blue_card += 1
             return True
-        if px.like(Pixel(config["pixel"]["color"]["purple"])):
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["purple"])):
             self.purple_card += 1
             return True
-        if px.like(Pixel(config["pixel"]["color"]["yellow"])):
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["yellow"])):
             self.yellow_card += 1
             return True
-        if px.like(Pixel(config["pixel"]["color"]["red"])):
+        if self.find_color_in_range(start, end, Pixel(config["pixel"]["color"]["red"])):
             self.red_card += 1
             return True
         return False
@@ -131,6 +135,8 @@ class Action:
     @staticmethod
     def increase_bet():
         pyautogui.moveTo(*config["click"]["increase_bet"])
+        pyautogui.click()
+        pyautogui.moveRel(0, -20)
         pyautogui.click()
 
     # 放弃

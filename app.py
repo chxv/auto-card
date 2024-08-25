@@ -82,7 +82,10 @@ def run(m: Metrics, times: int) -> int:
             log("amazing event, wait for you", 0)
             return i
         action.Action.give_up()
-        log("give up")
+        if page.yellow_card + page.red_card > 0:
+            log("give up", 1)  # need double confirm give up
+        else:
+            log("give up")
     return times
 
 
